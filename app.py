@@ -1,4 +1,5 @@
 import json
+import os
 import yaml
 import time
 import threading
@@ -6,7 +7,7 @@ from paho.mqtt.client import Client, CallbackAPIVersion
 import uuid
 
 # --- Load configuration from file ---
-def load_config(path="config.yaml"):
+def load_config(path=os.getenv("CONFIG_FILE","config.yaml")):
     with open(path, "r") as f:
         return yaml.safe_load(f) or {}
 
@@ -17,8 +18,8 @@ VEHICLE_ID = config.get("id", f"urn:ngsi-ld:vehicle:{uuid.uuid4()}")
 mqtt_config = config.get("mqtt", {})
 MQTT_BROKER = mqtt_config.get("broker", "localhost")
 MQTT_PORT = mqtt_config.get("port", 1883)
-MQTT_USERNAME = mqtt_config.get("user")
-MQTT_PASSWORD = mqtt_config.get("password")
+MQTT_USERNAME = mqtt_config.get("user",os.getenv("MQTT_USERNAME"))
+MQTT_PASSWORD = mqtt_config.get("password",os.getenv("MQTT_PASSWORD"))
 PERIODIC_INTERVAL = mqtt_config.get("periodic_interval", 5)
 
 topics = mqtt_config.get("topics", {})
