@@ -1,0 +1,47 @@
+{
+  "mqtt_topic": "v1/nemo.cab/<ID>/telemetry",
+  "description": "Telemetry data from NEMO device, published in JSON format.",
+  "payload": {
+    "timestamp": {
+      "type": "integer",
+      "description": "Unix timestamp in milliseconds since 1970-01-01T00:00:00Z (UTC)."
+    },
+    "position_latitude": {
+      "type": "float",
+      "description": "Aktuelle Position des Fahrzeugs"
+    },
+    "position_longitude": {
+      "type": "float",
+      "description": "Aktuelle Position des Fahrzeugs"
+    },
+    "position_heading": {
+      "type": "float",
+      "description": "Aktuelle Ausrichtung (Ref Nord)"
+    },
+    "velocity": {
+      "type": "float",
+      "description": "Aktuelle Geschwindigkeit des Fahrzeugs"
+    },
+    "state_of_charge": {
+      "type": "float",
+      "description": "Batteriestand (SoC)"
+    },
+    "ad_status": {
+      "type": "integer",
+      "description": "Stati Nummer mit Offline Tabelle"
+    },
+    "ad_nemo_status": {
+      "type": "integer",
+      "description": "Stati Nummer mit Offline Tabelle"
+    }
+  },
+  "example_payload": {
+  "position_latitude": 52.520008,
+  "position_longitude": 13.404954,
+  "position_heading": 90.0,
+  "velocity": 45.6,
+  "state_of_charge": 76.3,
+  "ad_status": 3,
+  "ad_nemo_status": 1
+  }
+}

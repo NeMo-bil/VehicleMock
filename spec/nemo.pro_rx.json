@@ -1,0 +1,28 @@
+{
+  "mqtt_topic": "v1/nemo.pro/command",
+  "description": "Command data from Fiware device, published in JSON format.",
+  "payload": {
+    "cab_id_list": {
+      "type": "array of integers",
+      "description": "Liste von Fahrzeug-IDs"
+    },
+    "coupling_vehicle_count": {
+      "type": "integer",
+      "description": "Sollzustand der gekoppelten Fahrzeuge"
+    },
+    "driverinfo_destination": {
+      "type": "string",
+      "description": "Text, der an die VKU geliefert wird. Beinhaltet das nächste Routenziel"
+    },
+    "driverinfo_coupling_status": {
+      "type": "string",
+      "description": "Pro steht für die Kopplung"
+    }
+  },
+  "example_payload": {
+  "cab_id_list": [0, 1, 2],
+  "coupling_vehicle_count": 3,
+  "driverinfo_destination": "Etteln Bahnhof",
+  "driverinfo_coupling_status": "Pro: Koppeln mit Fahrzeug 0 aktiv"  
+  }
+}

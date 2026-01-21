@@ -1,0 +1,48 @@
+{
+  "mqtt_topic": "v1/nemo.pro/hf/telemetry",
+  "description": "Telemetry data from NEMO device, published in JSON format.",
+  "payload": {
+    "timestamp": {
+      "type": "integer",
+      "description": "Unix timestamp in milliseconds since 1970-01-01T00:00:00Z (UTC)."
+    },
+    "position_latitude": {
+      "type": "float",
+      "description": "Latitude in decimal degrees."
+    },
+    "position_longitude": {
+      "type": "float",
+      "description": "Longitude in decimal degrees."
+    },
+    "position_heading": {
+      "type": "float",
+      "description": "Heading in degrees (0–360), indicating the direction of movement."
+    },
+    "velocity": {
+      "type": "float",
+      "description": "Velocity in meters per second (m/s)."
+    },
+    "state_of_charge": {
+      "type": "float",
+      "description": "Battery state of charge in percentage (0–100)."
+    },
+    "ad_status": {
+      "type": "integer",
+      "description": "Autonomous driving system status code (custom enumeration)."
+    },
+    "ad_nemo_status": {
+      "type": "integer",
+      "description": "NEMO-specific AD module status code (custom enumeration)."
+    }
+  },
+  "example_payload": {
+    "timestamp": 1717414982000,
+    "position_latitude": 52.520008,
+    "position_longitude": 13.404954,
+    "position_heading": 135.0,
+    "velocity": 5.5,
+    "state_of_charge": 78.2,
+    "ad_status": 3,
+    "ad_nemo_status": 1
+  }
+}

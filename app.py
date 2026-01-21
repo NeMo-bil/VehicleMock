@@ -5,6 +5,7 @@ import time
 import threading
 from paho.mqtt.client import Client, CallbackAPIVersion
 import uuid
+import utils, cab, pro, vehicle
 
 # --- Load configuration from file ---
 def load_config(path=os.getenv("CONFIG_FILE","config.yaml")):
@@ -13,7 +14,21 @@ def load_config(path=os.getenv("CONFIG_FILE","config.yaml")):
 
 config = load_config()
 
+
+def isCab():
+    return VEHICLE_TYPE == "cab"
+
 VEHICLE_ID = config.get("id", f"urn:ngsi-ld:vehicle:{uuid.uuid4()}")
+VEHICLE_TYPE = config.get("type", "cab")
+VEHICLE_INSTANCE = vehicle.Vehicle
+
+print("Initialized as type ", VEHICLE_TYPE, " with id ", VEHICLE_ID)
+
+if isCab(): 
+    VEHICLE_INSTANCE = cab.Cab(VEHICLE_ID)
+else:
+    VEHICLE_INSTANCE = pro.Pro(VEHICLE_ID)
+
 
 mqtt_config = config.get("mqtt", {})
 MQTT_BROKER = mqtt_config.get("broker", "localhost")
@@ -21,10 +36,6 @@ MQTT_PORT = mqtt_config.get("port", 1883)
 MQTT_USERNAME = mqtt_config.get("user",os.getenv("MQTT_USERNAME"))
 MQTT_PASSWORD = mqtt_config.get("password",os.getenv("MQTT_PASSWORD"))
 PERIODIC_INTERVAL = mqtt_config.get("periodic_interval", 5)
-
-topics = mqtt_config.get("topics", {})
-INPUT_TOPIC = topics.get("commands", "v1/vehicle/{vehicle_id}/command").format(vehicle_id=VEHICLE_ID)
-OUTPUT_TOPIC = topics.get("telemetry", "v1/vehicle/{vehicle_id}/telemetry").format(vehicle_id=VEHICLE_ID)
 
 vehicleData = {
   "location": [1.0,1.0],
@@ -35,46 +46,25 @@ vehicleData = {
     "chainedPosition": 0
 }
 
-def calculate_new_position(current: float, target: float) -> float:
-    difference = target - current
-    step = difference * 0.1
-    if abs(step) < 0.01:
-        step = min(0.01, difference) if difference > 0 else max(-0.01, difference)
-    return current + step
-
-def is_valid_next_stop_location(payload):
-    value = payload.get("nextStopLocation")
-
-    # Must be a list of exactly 2 elements
-    if not isinstance(value, list) or len(value) != 2:
-        return False
-
-    # Each element must be a float (or int, optionally)
-    return all(isinstance(x, (float, int)) for x in value)
 
 def on_connect(client, userdata, flags, reason_code, properties):
     print("Connected with result code", reason_code)
-    client.subscribe(INPUT_TOPIC)
+    commandTopic = VEHICLE_INSTANCE.getCommandTopic()
+    print("Subscribing to command topic:", commandTopic)
+    client.subscribe(commandTopic)
 
 def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode())
         print("Received payload:", payload)
-
-        if is_valid_next_stop_location(payload):
-            vehicleData["location"][0] = calculate_new_position(vehicleData["location"][0],payload["nextStopLocation"][0])
-            vehicleData["location"][1] = calculate_new_position(vehicleData["location"][1],payload["nextStopLocation"][1])
-            print("New vehicle data:", vehicleData)
-        else:
-            print("Missformed payload:", payload)
+        VEHICLE_INSTANCE.handleCommand(payload)
 
     except Exception as e:
         print("Error handling message:", e)
 
 def periodic_publisher(client):
     while True:
-        client.publish(OUTPUT_TOPIC, json.dumps(vehicleData))
-        print(f"[Periodic] Published telemetry to {OUTPUT_TOPIC}: {vehicleData}")
+        VEHICLE_INSTANCE.refreshAndSend(client)
         time.sleep(PERIODIC_INTERVAL)
 
 client = Client(callback_api_version=CallbackAPIVersion.VERSION2)

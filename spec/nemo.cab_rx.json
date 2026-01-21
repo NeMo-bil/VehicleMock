@@ -1,0 +1,43 @@
+{
+  "mqtt_topic": "v1/nemo.cab/<ID>/command",
+  "description": "Commadn data from Fiware device, published in JSON format.",
+  "payload": {
+    "passenger_information": {
+      "type": "string",
+      "description": "Text der an die VKU(?) geliefert wird. Beinhaltet das nächste Routenziel"
+    },
+    "ad_koppelpunkt_region": {
+      "type": "integer",
+      "description": "Regionsnummer mit Offline Tabelle"
+    },
+    "ad_koppelindex": {
+      "type": "integer",
+      "description": "Index im Konvoi"
+    },
+    "ad_pickup_dropoff_position_longitude": {
+      "type": "double",
+      "description": "Ziel um Personen abzuholen etc."
+    },
+    "ad_pickup_dropoff_position_latitude": {
+      "type": "double",
+      "description": "Ziel um Personen abzuholen etc."
+    },
+    "ad_door_open_request": {
+      "type": "boolean",
+      "description": "Open: 1, Close: 0"
+    },
+    "goal_position_info": {
+      "type": "integer",
+      "description": "Pick Up / Drop Off / Coupling"
+    }
+  },
+  "example_payload": {
+  "passenger_information": "Next stop: Etteln Bahnhof",
+  "ad_koppelpunkt_region": 2,
+  "ad_koppelindex": 5,
+  "ad_pickup_dropoff_position_longitude": 13.404954,
+  "ad_pickup_dropoff_position_latitude": 52.520008,
+  "ad_door_open_request": true,
+  "goal_position_info": 1
+  }
+}
